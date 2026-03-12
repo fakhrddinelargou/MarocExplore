@@ -4,6 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Destination;
+use Illuminate\Support\Facades\DB;
+use function PHPUnit\Framework\returnArgument;
+
 
 class DestinationController extends Controller
 {
@@ -12,7 +16,24 @@ class DestinationController extends Controller
      */
     public function index()
     {
-        //
+        $destination = DB::table('users')
+            ->join('itineraries', 'itineraries.user_id', '=', 'users.id')
+            ->join('destinations', 'destinations.itinerary_id', '=', 'itineraries.id')
+            ->where('users.id', auth()->id())
+            ->select('destinations.*')
+            ->orderBy('destinations.id', 'asc')
+            ->get();
+
+        if ($destination->isEmpty()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'There are no destinations for this itinerary'
+            ], 404);
+        }
+        return response()->json([
+            'status' => 'success',
+            'data' => $destination
+        ]);
     }
 
     /**
@@ -20,7 +41,31 @@ class DestinationController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $data = $request->validate([
+            'name' => ['string ', 'max:225', 'required'],
+            'location' => ['string ', 'max:225', 'required'],
+            'activities' => ['string ', 'required'],
+        ]);
+
+        if (!$data) {
+            return response()->json([
+                'Error' => 'Data is not valid '
+            ]);
+        }
+
+        Destination::create([
+            'itinerary_id' => $request->itinerary_id,
+            'name' => $data['name'],
+            'location' => $data['location'],
+            'activities' => $data['activities']
+        ]);
+
+
+        return response()->json([
+            'status' => 'success'
+        ], 201);
+
     }
 
     /**
@@ -28,7 +73,16 @@ class DestinationController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $destination = DB::table('destinations')->where('id', $id)->first();
+
+        if (!$destination) {
+            return response()->json(['Error' => 'Destination Not Found'], 404);
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $destination
+        ], 200);
     }
 
     /**
@@ -36,7 +90,37 @@ class DestinationController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $data = $request->validate([
+            'name' => ['string ', 'max:225', 'required'],
+            'location' => ['string ', 'max:225', 'required'],
+            'activities' => ['string ', 'required'],
+        ]);
+
+        if (!$data) {
+            return response()->json([
+                'Error' => 'Data is not valid '
+            ]);
+        }
+
+        $destination = DB::table('destinations')
+            ->where('id', $id)
+            ->update([
+                'name' => $data['name'],
+                'location' => $data['location'],
+                'activities' => $data['activities'],
+            ]);
+
+        if (!$destination) {
+
+            return response()->json(['Error' => 'Destination Not Found'], 404);
+
+        }
+
+
+        return response()->json(['status' => 'Destination Updated'], 200);
+
+
+
     }
 
     /**
@@ -44,6 +128,17 @@ class DestinationController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $destination = DB::table('destinations')
+            ->where('id', $id)
+            ->delete();
+
+        if (!$destination) {
+
+            return response()->json(['Error' => 'Destination Not Found'], 404);
+
+        }
+
+        return response()->json(['status' => 'Destination Deleted'], 200);
+
     }
 }

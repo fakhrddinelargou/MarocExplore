@@ -3,14 +3,23 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Itinerarie;
-use App\Models\User;
+use App\Models\Itinerary;
+// use App\Models\User;
 
 class Destination extends Model
 {
-    
-    public function itinerarie(){
-        return $this->hasMany(itinerarie::class);
+
+    protected $fillable = [
+        'itinerary_id',
+        'name',
+        'location',
+        'activities'
+    ];
+
+
+    public function itinerarie()
+    {
+        return $this->hasMany(itinerary::class);
     }
 
 }

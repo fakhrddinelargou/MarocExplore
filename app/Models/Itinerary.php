@@ -9,11 +9,24 @@ use App\Models\User;
 
 class Itinerary extends Model
 {
-    public function destinations(){
+
+
+    protected $fillable = [
+        'title',
+        'category',
+        'duration',
+        'image',
+        'user_id'
+    ];
+
+
+    public function destinations()
+    {
         return $this->hasMany(Destination::class);
     }
 
-    public function user(){
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 }

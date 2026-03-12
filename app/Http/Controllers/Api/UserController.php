@@ -24,9 +24,9 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate();
+        // $request->validate();
 
-        
+
     }
 
     /**
@@ -51,6 +51,6 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         return 'delete success';
-        
+
     }
 }

@@ -22,9 +22,9 @@ class AuthRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['string' , 'required' , 'max : 100'],
-             'email' => [ 'required','string','lowercase','email','max:255'],
-             'password' => ['required' , 'string' , 'min:8']
+            'name' => ['string', 'required', 'max : 100'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
+            'password' => ['required', 'string', 'min:8']
         ];
     }
 }
