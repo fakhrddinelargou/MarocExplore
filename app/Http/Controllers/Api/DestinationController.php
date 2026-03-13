@@ -16,7 +16,7 @@ class DestinationController extends Controller
      */
     public function index()
     {
-        $destination = DB::table('users')
+        $data = DB::table('users')
             ->join('itineraries', 'itineraries.user_id', '=', 'users.id')
             ->join('destinations', 'destinations.itinerary_id', '=', 'itineraries.id')
             ->where('users.id', auth()->id())
@@ -24,7 +24,7 @@ class DestinationController extends Controller
             ->orderBy('destinations.id', 'asc')
             ->get();
 
-        if ($destination->isEmpty()) {
+        if ($data->isEmpty()) {
             return response()->json([
                 'status' => 'error',
                 'message' => 'There are no destinations for this itinerary'
@@ -32,7 +32,7 @@ class DestinationController extends Controller
         }
         return response()->json([
             'status' => 'success',
-            'data' => $destination
+            'data' => $data
         ]);
     }
 
@@ -73,15 +73,15 @@ class DestinationController extends Controller
      */
     public function show(string $id)
     {
-        $destination = DB::table('destinations')->where('id', $id)->first();
+        $data = DB::table('destinations')->where('id', $id)->first();
 
-        if (!$destination) {
+        if (!$data) {
             return response()->json(['Error' => 'Destination Not Found'], 404);
         }
 
         return response()->json([
             'status' => 'success',
-            'data' => $destination
+            'data' => $data
         ], 200);
     }
 

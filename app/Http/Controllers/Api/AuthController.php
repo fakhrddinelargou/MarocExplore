@@ -83,9 +83,9 @@ class AuthController extends Controller
     public function resetPassword(Request $request)
     {
 
-     $data = $request->validate([
-        'email' => ['string' , 'required' ,  'max:250']
-    ]);
+        $data = $request->validate([
+            'email' => ['string', 'required', 'max:250']
+        ]);
 
         $user = DB::table('users')
             ->where('email', $data['email'])
@@ -98,19 +98,19 @@ class AuthController extends Controller
         $token = Str::random(64);
 
         DB::table('password_reset_tokens')->updateOrInsert(
-            ['email' => $user->email], 
+            ['email' => $user->email],
             [
                 'token' => $token,
-                'created_at' => Carbon::now() 
+                'created_at' => Carbon::now()
             ]
         );
 
 
         try {
-        Mail::to($user->email)->queue(new ResetPasswordViaMail($token, $user->email));
-    } catch (\Exception $e) {
-        return response()->json(['Error' => 'Mail service problem: ' . $e->getMessage()], 500);
-    }
+            Mail::to($user->email)->queue(new ResetPasswordViaMail($token, $user->email));
+        } catch (\Exception $e) {
+            return response()->json(['Error' => 'Mail service problem: ' . $e->getMessage()], 500);
+        }
         return response()->json(['status' => 'success']);
 
 
@@ -119,40 +119,41 @@ class AuthController extends Controller
 
 
 
-    public function updatePassword(Request $request){
+    public function updatePassword(Request $request)
+    {
 
-    $data = $request->validate([
-        'email'    => ['required', 'email'],
-        'token'    => ['required'],
-        'password' => ['required', 'string', 'min:8', 'confirmed'], 
-    ]);
+        $data = $request->validate([
+            'email' => ['required', 'email'],
+            'token' => ['required'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
 
-    $checkResetTable = DB::table('password_reset_tokens')
-                       ->where('email' , $request->email)
-                       ->where('token' , $request->token)
-                       ->first();
-    if(!$checkResetTable){
-        return response()->json(['Error' => 'Unauthorized'] ,401);
-    }
+        $checkResetTable = DB::table('password_reset_tokens')
+            ->where('email', $request->email)
+            ->where('token', $request->token)
+            ->first();
+        if (!$checkResetTable) {
+            return response()->json(['Error' => 'Unauthorized'], 401);
+        }
 
-    $expire = Carbon::parse($checkResetTable->created_at)->addMinutes(10);
+        $expire = Carbon::parse($checkResetTable->created_at)->addMinutes(10);
 
-    if(Carbon::now()->gt($expire)){
-        return response()->json(['Error' => 'Token is Expire'] ,403);
-    }
+        if (Carbon::now()->gt($expire)) {
+            return response()->json(['Error' => 'Token is Expire'], 403);
+        }
 
-    DB::table('users')
-    ->where('email' , $request->email)
-    ->update([
-        'password' => Hash::make($data['password']) 
-    ]);
+        DB::table('users')
+            ->where('email', $request->email)
+            ->update([
+                'password' => Hash::make($data['password'])
+            ]);
 
-    DB::table('password_reset_tokens')
-    ->where('email' , $data['email'])
-    ->delete();
+        DB::table('password_reset_tokens')
+            ->where('email', $data['email'])
+            ->delete();
 
-        return response()->json(['success' => 'Password Updated'] ,201);
-    
+        return response()->json(['success' => 'Password Updated'], 201);
+
 
     }
 

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Itinerary;
 use Illuminate\Support\Facades\DB;
+use function PHPUnit\Framework\returnArgument;
 
 
 class ItineraryController extends Controller
@@ -15,12 +16,17 @@ class ItineraryController extends Controller
      */
     public function index()
     {
-        $itineraries = DB::table('itineraries')->where('user_id', auth()->id())->get();
+        $data = DB::table('itineraries')
+            ->join('destinations', 'destinations.itinerary_id', '=', 'itineraries.id')
+            ->where('itineraries.user_id', auth()->id())
+            ->select('itineraries.*', 'destinations.name as dest_name', 'destinations.location')
+            ->get()
+            ->groupBy('id');
 
         // dd($itineraries);
         return response()->json([
             'status' => 'success',
-            'data' => $itineraries
+            'data' => $data
         ]);
     }
 
@@ -70,6 +76,56 @@ class ItineraryController extends Controller
         ], 404);
 
     }
+
+    public function getItineraryByCategory(string $category)
+    {
+
+        $data = DB::table('itineraries')
+            ->where('category', $category)
+            ->where('user_id', auth()->id())
+            ->get();
+        if ($data->isEmpty()) {
+            return response()->json(['Error' => 'itinerary is not found']);
+        }
+
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $data
+        ], 200);
+
+    }
+
+
+    public function search(Request $request)
+    {
+
+        $data = DB::table('itineraries')
+            ->where('title', 'ilike', '%' . $request->keyword . '%')
+            ->where('user_id', auth()->id())
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+
+        if ($data->isEmpty()) {
+            return response()->json(['Error' => 'Not Found'], 404);
+        }
+
+        return response()->json([
+            'stutas' => 'success',
+            'data' => $data
+        ]);
+
+        // return  "true";
+
+    }
+
+    // public function populerItineraries(){
+
+    // $data = DB::
+
+    // }
+
 
     /**
      * Update the specified resource in storage.
