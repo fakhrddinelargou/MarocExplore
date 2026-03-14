@@ -1,8 +1,6 @@
 <?php
 
-// use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-// use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ItineraryController;
 use App\Http\Controllers\Api\DestinationController;
@@ -17,11 +15,6 @@ Route::post('/auth/reset-password', [AuthController::class, 'updatePassword'])->
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'destroy'])->name('logout');
-
-    // Route::post('/users', [UserController::class , 'store'])->name('users.store');
-    // Route::get('/users', [UserController::class , 'index'])->name('users.show');
-    // Route::get('/users/{id}', [UserController::class , 'show'])->name('users.getUser');
-    // Route::delete('/users/{id}', [UserController::class , 'destroy'])->name('users.delete');
 
     Route::get('/itineraries', [ItineraryController::class, 'index'])->name('itineraries.show');
     Route::post('/itineraries', [ItineraryController::class, 'store'])->name('itineraries.store');
@@ -39,8 +32,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/destinations/{id}', [DestinationController::class, 'update'])->name('destinations.update');
     Route::delete('/destinations/{id}', [DestinationController::class, 'destroy'])->name('destinations.delete');
 
-    Route::get('/favorites',[FavoriteController::class , 'index'])->name('favotire.getAll');
-    Route::post('/favorites/{id}',[FavoriteController::class , 'store'])->name('favotire.store');
-    Route::delete('/favorites/{id}',[FavoriteController::class , 'destroy'])->name('favotire.store');
+    Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorite.getAll');
+    Route::post('/favorites/{id}', [FavoriteController::class, 'store'])->name('favorite.store');
+    Route::delete('/favorites/{id}', [FavoriteController::class, 'destroy'])->name('favorite.delete');
 
 });

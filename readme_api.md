@@ -20,7 +20,7 @@ A high-performance API built with Laravel 11 and PostgreSQL, specifically design
 
 # Clone the repository
 git clone https://github.com/fakhrddinelargou/MarocExplore
-cd finance-dashboard-api
+cd explore-maroc-api
 
 # Install PHP dependencies
 composer install
