@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Destination;
 use Illuminate\Support\Facades\DB;
-use function PHPUnit\Framework\returnArgument;
 
 
 class DestinationController extends Controller

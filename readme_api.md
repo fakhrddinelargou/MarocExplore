@@ -36,7 +36,7 @@ php artisan key:generate
 DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
 DB_PORT=5432
-DB_DATABASE=finance_dashboard
+DB_DATABASE=your_app_name
 DB_USERNAME=your_username
 DB_PASSWORD=your_password
 
@@ -67,17 +67,23 @@ Visit `http://localhost:8000` to verify the server is running.
 - `GET /api/itineraries` - Get all user itineraries (protected)
 - `POST /api/itineraries` - Create new itinerary (protected)
 - `GET /api/itineraries/search` - Search itineraries (protected)
-- `GET /api/itineraries/{id}` - Get a specific itinerary
-- `GET /api/category/{category}/itineraries` - Get itineraries by category
+- `GET /api/itineraries/{id}` - Get a specific itinerary (protected)
+- `GET /api/category/{category}/itineraries` - Get itineraries by category (protected)
 - `PATCH /api/itineraries/{id}` - Update an itinerary (protected)
 - `DELETE /api/itineraries/{id}` - Delete an itinerary (protected)
 
 ### Destination
 - `GET /api/destinations` - Get all user destinations (protected)
 - `POST /api/destinations` - Create new destinations (protected)
-- `GET /api/destinations/{id}` - Get a specific itinerary
+- `GET /api/destinations/{id}` - Get a specific itinerary (protected)
 - `PATCH /api/destinations/{id}` - Update an destinations (protected)
 - `DELETE /api/destinations/{id}` - Delete an destinations (protected)
+
+### Favorites
+
+- `GET /api/favorites` — Get all user favorites (protected)
+- `POST /api/favorites/{id}` — Add an itinerary to favorites (protected)
+- `DELETE /api/favorites/{id}` — Remove an itinerary from favorites (protected)
 
 ## Database
 
@@ -111,6 +117,13 @@ Visit `http://localhost:8000` to verify the server is running.
 - name (VARCHAR NOT NULL)
 - location (VARCHAR NOT NULL)
 - activities (TEXT NOT NULL) - list of activities or description
+- created_at (TIMESTAMP NOT NULL)
+- updated_at (TIMESTAMP NOT NULL)
+
+**Itinerary_User Table (Favorites)**
+- id (BIGINT PRIMARY KEY)
+- user_id (BIGINT NOT NULL) - foreign key referencing `users(id)` (on delete cascade)
+- itinerary_id (BIGINT NOT NULL) - foreign key referencing `itineraries(id)` (on delete cascade)
 - created_at (TIMESTAMP NOT NULL)
 - updated_at (TIMESTAMP NOT NULL)
 
@@ -195,6 +208,14 @@ curl -X POST http://localhost:8000/api/itineraries \
   }'
 ```
 
+### Add to Favorites
+```bash
+curl -X POST http://localhost:8000/api/favorites/2 \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <your-token>"
+
+
+
 ## Data Models
 
 ### User
@@ -234,6 +255,20 @@ curl -X POST http://localhost:8000/api/itineraries \
   "updatedAt": " date string"
 }
 ```
+
+### Favorite
+```json
+{
+  "id": "uuid",
+  "itinerary_id": "uuid",
+  "user_id": "uuid",
+  "createdAt": " date string",
+  "updatedAt": " date string"
+}
+```
+
+
+
 
 
 
